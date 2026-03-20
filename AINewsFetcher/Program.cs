@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Xml;
+using System.ServiceModel.Syndication;
 
 class Program
 {
@@ -11,7 +13,12 @@ class Program
         using var client = new HttpClient();
         var rss = await client.GetStringAsync(url);
 
-        Console.WriteLine(rss);
+        using var reader = XmlReader.Create(new System.IO.StringReader(rss));
+        var feed = SyndicationFeed.Load(reader);
 
+        foreach (var item in feed.Items)
+        {
+            Console.WriteLine(item.Title.Text);
+        }        
     }
 }
